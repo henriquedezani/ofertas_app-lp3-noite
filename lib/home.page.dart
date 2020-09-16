@@ -28,7 +28,24 @@ class HomePage extends StatelessWidget {
             Image.network(
                 'https://via.placeholder.com/100x100.png?text=Produto1'),
             SizedBox(width: 10),
-            Text("Nome do Produto"),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Nome do Produto"),
+                Text("R\$ 100,00"),
+                Text("Descrição do Produto"),
+                Text("Loja"),
+                SizedBox(
+                  height: 10,
+                ),
+                CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      'https://imagens.canaltech.com.br/celebridades/78.400.jpg'),
+                ),
+                Text("Nome do Usuário"),
+              ],
+            ),
           ],
         ),
       ),
