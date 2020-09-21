@@ -21,6 +21,12 @@ class HomePage extends StatelessWidget {
           OfertaItem(),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).pushNamed('/cadastro');
+        },
+      ),
     );
   }
 }
@@ -57,13 +63,16 @@ class OfertaItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Computador Dell Vostro 1400... ",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Container(
+                        child: Text(
+                          "Computador Dell Vostro 1400 16GB RAM 1TB SSD ",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                     Text(
