@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
         '/cadastro': (context) => CadastroPage(),
       },
       initialRoute: '/',
+      theme: ThemeData(
+        primaryColor: Colors.blue[800],
+      ),
     );
   }
 }
