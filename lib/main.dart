@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/detalhe.page.dart';
 import 'package:ofertas_app/home.page.dart';
 import 'package:ofertas_app/login.page.dart';
 import 'package:ofertas_app/cadastro.page.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginPage(),
         '/home': (context) => HomePage(),
         '/cadastro': (context) => CadastroPage(),
+        '/detalhe': (context) => DetalhePage(),
       },
       initialRoute: '/',
       theme: ThemeData(
