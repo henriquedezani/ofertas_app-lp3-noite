@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatelessWidget {
   var _formKey = GlobalKey<FormState>();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance; // singleton
+
+  String email;
+  String senha;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     validator: (value) =>
                         value.isEmpty ? "Campo obrigatório" : null,
+                    onSaved: (value) => email = value,
                   ),
                   SizedBox(height: 10),
                   TextFormField(
@@ -44,6 +51,7 @@ class LoginPage extends StatelessWidget {
                     validator: (value) =>
                         value.isEmpty ? "Campo obrigatório" : null,
                     obscureText: true,
+                    onSaved: (value) => senha = value,
                   ),
                   Container(
                     width: double.infinity,
@@ -53,9 +61,22 @@ class LoginPage extends StatelessWidget {
                         "Entrar",
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState.validate())
-                          Navigator.of(context).pushReplacementNamed('/home');
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          try {
+                            var result =
+                                await _auth.createUserWithEmailAndPassword(
+                                    email: email, password: senha);
+                            if (result != null) {
+                              print(result.user.uid);
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            }
+                          } on FirebaseAuthException catch (ex) {
+                            print(ex.message);
+                          }
+                        }
                       },
                     ),
                   ),
