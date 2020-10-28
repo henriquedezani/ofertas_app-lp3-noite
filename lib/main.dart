@@ -3,6 +3,7 @@ import 'package:ofertas_app/detalhe.page.dart';
 import 'package:ofertas_app/home.page.dart';
 import 'package:ofertas_app/login.page.dart';
 import 'package:ofertas_app/cadastro.page.dart';
+import 'package:ofertas_app/registro.page.dart';
 
 void main() {
   MyApp app = new MyApp(); // criar um objeto da classe.
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/cadastro': (context) => CadastroPage(),
         '/detalhe': (context) => DetalhePage(),
+        '/registro': (context) => RegistroPage(),
       },
       initialRoute: '/',
       theme: ThemeData(

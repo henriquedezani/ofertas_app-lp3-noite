@@ -1,14 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatelessWidget {
+class RegistroPage extends StatelessWidget {
   var _formKey = GlobalKey<FormState>();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FirebaseAuth _auth = FirebaseAuth.instance; // singleton
 
   String email;
+  String nome;
   String senha;
+
+  Future registraUsuario(BuildContext context) async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      if (await criaUsuarioNoFirebase())
+        Navigator.of(context).pushReplacementNamed('/home');
+    }
+  }
+
+  Future<bool> criaUsuarioNoFirebase() async {
+    try {
+      var result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: senha);
+      await result.user.updateProfile(displayName: nome);
+      return true;
+    } on FirebaseAuthException catch (ex) {
+      exibeSnackBarComMensagemErro(ex.message);
+      return false;
+    }
+  }
+
+  void exibeSnackBarComMensagemErro(String erro) {
+    final snackbar = SnackBar(
+      content: Text(erro),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 10),
+    );
+    _scaffoldKey.currentState.showSnackBar(
+      snackbar,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +63,18 @@ class LoginPage extends StatelessWidget {
                   SizedBox(
                     height: 50,
                   ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Nome",
+                      hintText: "Digite seu nome completo.",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    validator: (value) =>
+                        value.isEmpty ? "Campo obrigatório" : null,
+                    onSaved: (value) => nome = value,
+                  ),
+                  SizedBox(height: 10),
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: "E-mail",
@@ -60,72 +104,17 @@ class LoginPage extends StatelessWidget {
                     child: RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(
-                        "Entrar",
+                        "Registrar",
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          try {
-                            var result = await _auth.signInWithEmailAndPassword(
-                                email: email, password: senha);
-                            if (result != null) {
-                              print(result.user.uid);
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/home');
-                            }
-                          } on FirebaseAuthException catch (ex) {
-                            final snackbar = SnackBar(
-                              content: Text(ex.message),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 10),
-                            );
-                            _scaffoldKey.currentState.showSnackBar(
-                              snackbar,
-                            );
-                          }
-                        }
-                      },
+                      onPressed: () => registraUsuario(context),
                     ),
                   ),
                   FlatButton(
-                    child: Text("Não tem cadastro? Clique aqui."),
+                    child: Text("Já tem cadastro? Faça o login."),
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/registro');
+                      Navigator.of(context).pop();
                     },
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text("ou, faça login pelas redes sociais."),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RaisedButton(
-                        color: Colors.red[400],
-                        child: Text(
-                          "Google",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      RaisedButton(
-                        color: Colors.blue[800],
-                        child: Text(
-                          "Facebook",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
                   ),
                 ],
               ),
