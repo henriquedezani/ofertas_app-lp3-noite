@@ -88,11 +88,22 @@ class LoginPage extends StatelessWidget {
                       },
                     ),
                   ),
-                  FlatButton(
-                    child: Text("Não tem cadastro? Clique aqui."),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/registro');
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FlatButton(
+                        child: Text("Novo Usuário"),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/registro');
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Esqueci a senha"),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/esqueceusenha');
+                        },
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 50,

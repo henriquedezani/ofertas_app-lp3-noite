@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ofertas_app/detalhe.page.dart';
+import 'package:ofertas_app/esqueceu_senha.page.dart';
 import 'package:ofertas_app/home.page.dart';
 import 'package:ofertas_app/login.page.dart';
 import 'package:ofertas_app/cadastro.page.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/cadastro': (context) => CadastroPage(),
         '/detalhe': (context) => DetalhePage(),
         '/registro': (context) => RegistroPage(),
+        '/esqueceusenha': (context) => EsqueceuSenhaPage(),
       },
       initialRoute: '/',
       theme: ThemeData(
