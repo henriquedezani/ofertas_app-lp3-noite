@@ -1,25 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/models/oferta.model.dart';
 
 class HomePage extends StatelessWidget {
+  final database = FirebaseFirestore.instance; // singleton
+
+  // database.collection('ofertas').snapshots() -> Stream (realtime) -> StreamBuilder
+  // database.collection('ofertas').get() -> Future (única vez) ~ SELECT -> FutureBuilder
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Home Page"),
       ),
-      body: ListView(
-        children: [
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-          OfertaItem(),
-        ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: database.collection('ofertas').snapshots(),
+        builder: (_, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          var documents = snapshot.data.docs;
+
+          return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (_, index) {
+              var dados = documents[index].data();
+              return OfertaItem(Oferta.fromMap(dados));
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
@@ -33,6 +46,13 @@ class HomePage extends StatelessWidget {
 }
 
 class OfertaItem extends StatelessWidget {
+  // atributo da classe:
+  final Oferta oferta;
+
+  // construtor da classe:
+  OfertaItem(this.oferta);
+
+  // método:
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -71,7 +91,7 @@ class OfertaItem extends StatelessWidget {
                       Flexible(
                         child: Container(
                           child: Text(
-                            "Computador Dell Vostro 1400 16GB RAM 1TB SSD ",
+                            oferta.nome,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 15,
@@ -81,7 +101,7 @@ class OfertaItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "R\$ 100,00",
+                        "R\$ ${oferta.preco}",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -90,13 +110,13 @@ class OfertaItem extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    "Descrição do Produto",
+                    oferta.descricao,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
                     ),
                   ),
-                  Text("Loja"),
+                  Text(oferta.loja),
                   SizedBox(
                     height: 10,
                   ),
@@ -109,7 +129,7 @@ class OfertaItem extends StatelessWidget {
                       SizedBox(
                         width: 4,
                       ),
-                      Text("Nome do Usuário"),
+                      Text(oferta.userName),
                     ],
                   ),
                 ],
@@ -121,3 +141,12 @@ class OfertaItem extends StatelessWidget {
     );
   }
 }
+
+// JSON (JavaScript Object Notation)
+// {
+//   "nome": "Henrique",
+//   "idade": 39,
+//   "endereco": "Rua xyz.."
+// }
+
+// Map<String, dynamic> = DocumentSnapShot
