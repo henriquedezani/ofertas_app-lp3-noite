@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPage extends StatelessWidget {
   GlobalKey<FormState> formKey = new GlobalKey<FormState>(); // ~ id
+  var _database = FirebaseFirestore.instance;
+  var _auth = FirebaseAuth.instance; // singleton
 
   String validaCampo(String texto) {
     if (texto.isEmpty)
@@ -9,6 +13,11 @@ class CadastroPage extends StatelessWidget {
     else
       return null;
   }
+
+  String nome;
+  String descricao;
+  String loja;
+  double preco;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +27,17 @@ class CadastroPage extends StatelessWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.save),
-              onPressed: () {
+              onPressed: () async {
                 if (formKey.currentState.validate()) {
-                  // TODO: Salvar os dados no banco.
+                  formKey.currentState.save();
+                  await _database.collection('ofertas').add({
+                    "nome": nome,
+                    "descricao": descricao,
+                    "loja": loja,
+                    "preco": preco,
+                    "uid": _auth.currentUser.uid,
+                    "username": _auth.currentUser.displayName
+                  });
                   Navigator.of(context).pop();
                 }
               },
@@ -41,6 +58,7 @@ class CadastroPage extends StatelessWidget {
                       labelText: 'Nome do Produto',
                     ),
                     validator: validaCampo,
+                    onSaved: (value) => nome = value,
                   ),
                   TextFormField(
                     keyboardType: TextInputType.multiline,
@@ -50,12 +68,14 @@ class CadastroPage extends StatelessWidget {
                     maxLines: 5,
                     minLines: 3,
                     validator: validaCampo,
+                    onSaved: (value) => descricao = value,
                   ),
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Nome da Loja',
                     ),
                     validator: validaCampo,
+                    onSaved: (value) => loja = value,
                   ),
                   TextFormField(
                     keyboardType: TextInputType.number,
@@ -63,11 +83,7 @@ class CadastroPage extends StatelessWidget {
                       labelText: 'Preço',
                     ),
                     validator: validaCampo,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Cupom de desconto',
-                    ),
+                    onSaved: (value) => preco = double.tryParse(value) ?? 0,
                   ),
                 ],
               ),

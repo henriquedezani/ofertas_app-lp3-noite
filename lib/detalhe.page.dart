@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ofertas_app/models/oferta.model.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class DetalhePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Oferta _oferta = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Oferta"),
@@ -15,7 +18,7 @@ class DetalhePage extends StatelessWidget {
             height: 300,
             width: double.infinity,
             child: Image.network(
-              "https://i.pinimg.com/236x/ea/6c/99/ea6c993e281a8742f856652ca16024dd.jpg",
+              "https://via.placeholder.com/300x300.png?text=${_oferta.nome}",
               fit: BoxFit.cover,
             ),
           ),
@@ -26,7 +29,7 @@ class DetalhePage extends StatelessWidget {
               Flexible(
                 flex: 3,
                 child: Text(
-                  "Computador Dell Vostro 1400 16GB RAM 1TB SSD",
+                  _oferta.nome,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -36,7 +39,7 @@ class DetalhePage extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Text(
-                  "R\$ 100,00",
+                  "R\$ ${_oferta.preco}",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -46,7 +49,7 @@ class DetalhePage extends StatelessWidget {
             ],
           ),
           Text(
-            "Loja do Produto",
+            _oferta.loja,
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[600],
@@ -68,8 +71,7 @@ class DetalhePage extends StatelessWidget {
                 borderColor: Colors.amber,
                 spacing: 0.0),
           ),
-          Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+          Text(_oferta.descricao),
           SizedBox(
             width: double.infinity,
             child: FlatButton(

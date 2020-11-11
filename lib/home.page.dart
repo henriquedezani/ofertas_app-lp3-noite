@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ofertas_app/models/oferta.model.dart';
 
@@ -29,7 +30,8 @@ class HomePage extends StatelessWidget {
             itemCount: documents.length,
             itemBuilder: (_, index) {
               var dados = documents[index].data();
-              return OfertaItem(Oferta.fromMap(dados));
+              return OfertaItem(Oferta.fromMap(documents[index].id, dados),
+                  ref: documents[index].reference);
             },
           );
         },
@@ -46,18 +48,21 @@ class HomePage extends StatelessWidget {
 }
 
 class OfertaItem extends StatelessWidget {
+  var _auth = FirebaseAuth.instance;
+
   // atributo da classe:
   final Oferta oferta;
+  DocumentReference ref;
 
   // construtor da classe:
-  OfertaItem(this.oferta);
+  OfertaItem(this.oferta, {this.ref});
 
   // método:
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed('/detalhe');
+        Navigator.of(context).pushNamed('/detalhe', arguments: oferta);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -129,7 +134,49 @@ class OfertaItem extends StatelessWidget {
                       SizedBox(
                         width: 4,
                       ),
-                      Text(oferta.userName),
+                      Expanded(child: Text(oferta.userName)),
+                      _auth.currentUser.uid == oferta.uid
+                          ? IconButton(
+                              icon: Icon(Icons.delete,
+                                  color: Colors.red, size: 18),
+                              onPressed: () {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Confirma a exclusão?"),
+                                    content: Text(
+                                        "Os dados apagados não podem ser recuperados."),
+                                    actions: [
+                                      FlatButton(
+                                          child: Text("Cancelar"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          }),
+                                      RaisedButton(
+                                        color: Colors.red,
+                                        child: Text("Confirmar",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        onPressed: () {
+                                          ref.delete();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(),
+                      _auth.currentUser.uid == oferta.uid
+                          ? IconButton(
+                              icon: Icon(Icons.edit,
+                                  color: Colors.blue, size: 18),
+                              onPressed: () {
+                                //TODO: Implementar a Edição da Oferta (1 ponto na média)
+                              })
+                          : Container(),
                     ],
                   ),
                 ],

@@ -16,7 +16,8 @@ class Oferta {
       this.uid,
       this.userName});
 
-  Oferta.fromMap(Map<String, dynamic> dados) {
+  Oferta.fromMap(String id, Map<String, dynamic> dados) {
+    this.id = id;
     nome = dados['nome'];
     descricao = dados['descricao'];
     preco = dados['preco'];
